@@ -6,3 +6,6 @@
 !*.obj
 *.~docx
 ~$*.docx
+/rube-goldberg/nbproject/private/
+/rube-goldberg/build/
+/rube-goldberg/dist/

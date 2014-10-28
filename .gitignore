@@ -4,3 +4,5 @@
 /rudeGoldberg/build/
 
 !*.obj
+*.~docx
+~$*.docx

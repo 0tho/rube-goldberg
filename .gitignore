@@ -2,3 +2,5 @@
 /RubeGoldberg/build/
 /rudeGoldberg/nbproject/private/
 /rudeGoldberg/build/
+
+!*.obj

@@ -19,6 +19,8 @@ import javax.media.opengl.glu.GLU;
  * This version is equal to Brian Paul's version 1.2 1999/10/21
  */
 public class RudeGoldberg implements GLEventListener {
+    
+    ModelLoaderOBJ modelLoader = new ModelLoaderOBJ();
 
     public static void main(String[] args) {
         Frame frame = new Frame("Simple JOGL Application");
@@ -26,7 +28,7 @@ public class RudeGoldberg implements GLEventListener {
 
         canvas.addGLEventListener(new RudeGoldberg());
         frame.add(canvas);
-        frame.setSize(640, 480);
+        frame.setSize(1000, 700);
         final Animator animator = new Animator(canvas);
         frame.addWindowListener(new WindowAdapter() {
 
@@ -55,13 +57,16 @@ public class RudeGoldberg implements GLEventListener {
         // drawable.setGL(new DebugGL(drawable.getGL()));
 
         GL gl = drawable.getGL();
+        
+        modelLoader.init(gl);
+        
         System.err.println("INIT GL IS: " + gl.getClass().getName());
 
         // Enable VSync
         gl.setSwapInterval(1);
 
         // Setup the drawing area and shading mode
-        gl.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+        gl.glClearColor(100.0f, 100.0f, 100.0f, 0.0f);
         gl.glShadeModel(GL.GL_SMOOTH); // try setting this to GL_FLAT and see what happens.
     }
 
@@ -83,15 +88,17 @@ public class RudeGoldberg implements GLEventListener {
     }
 
     public void display(GLAutoDrawable drawable) {
-        GL gl = drawable.getGL();
+        GL gl = drawable.getGL();modelLoader.draw(gl);
 
         // Clear the drawing area
         gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
         // Reset the current matrix to the "identity"
-        gl.glLoadIdentity();
+        //gl.glLoadIdentity();
+        
+        modelLoader.draw(gl);
 
         // Move the "drawing cursor" around
-        gl.glTranslatef(-1.5f, 0.0f, -6.0f);
+        /*gl.glTranslatef(-1.5f, 0.0f, -6.0f);
 
         // Drawing Using Triangles
         gl.glBegin(GL.GL_TRIANGLES);
@@ -114,7 +121,7 @@ public class RudeGoldberg implements GLEventListener {
             gl.glVertex3f(1.0f, -1.0f, 0.0f);  // Bottom Right
             gl.glVertex3f(-1.0f, -1.0f, 0.0f); // Bottom Left
         // Done Drawing The Quad
-        gl.glEnd();
+        gl.glEnd();*/
 
         // Flush all drawing operations to the graphics card
         gl.glFlush();

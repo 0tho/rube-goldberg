@@ -46,7 +46,7 @@ public class ModelLoaderOBJ {
        //Paths of the 3D models.
        //String path1 = "models/formula.obj";
        //String path1 = "models/heli.obj";
-       String path1 = "models/barbell.obj";
+       String path1 = "../assets/apple.obj";
        ////String path2 = "models/formula.obj";
 
    //here the needed textures for the race-ground are loaded
@@ -64,7 +64,7 @@ public class ModelLoaderOBJ {
                FileInputStream r_path1 = new FileInputStream(path1);
                BufferedReader b_read1 =
                     new BufferedReader(new InputStreamReader(r_path1));
-               model1 = new GLModel(b_read1, true, "models/formula.mtl", gl);
+               model1 = new GLModel(b_read1, true, "../assets/apple.mtl", gl);
                r_path1.close();
                b_read1.close();
 
@@ -87,9 +87,9 @@ public class ModelLoaderOBJ {
     {
 
     //CAR 1 COORDINATES
-    float car1_x = 0f;
-    float car1_y = 0f;
-    float car1_z = 0f;
+    float car1_x = 5;
+    float car1_y = 5;
+    float car1_z = 5;
 
 //     //CAR 2 COORDINATES
 //     float car2_x = 0f;
@@ -109,14 +109,14 @@ public class ModelLoaderOBJ {
            //***car 1***
            gl.glPushMatrix();
 
-           //gl.glTranslatef(car1_x, car1_y, car1_z);
+           gl.glTranslatef(car1_x, car1_y, car1_z);
+           //gl.glScalef(0.5f, 0.5f, 0.5f);
            //gl.glScalef(0.0005F, 0.0005F, 0.0005F); //TOO BIG
            //gl.glRotatef(-90.0f, 0.0F, 1.0F, 0.0F);
            //gl.glRotatef((float)Math.toDegrees(movement_angle),0.0f,1.0f,0.0f);
 
            //draws the model
            model1.opengldraw(gl);
-
            gl.glPopMatrix();
 
   //          //***CAR2***

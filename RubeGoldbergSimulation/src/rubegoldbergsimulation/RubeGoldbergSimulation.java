@@ -47,7 +47,7 @@ public class RubeGoldbergSimulation extends Applet {
    		ObjectFile f = new ObjectFile ();
     		f.setFlags (ObjectFile.RESIZE | ObjectFile.TRIANGULATE | ObjectFile.STRIPIFY);
 
-                String objPath = assetsFolder + "ballon.obj";
+                String objPath = assetsFolder + "apple.obj";
 		if (application == false){
 			java.net.URL airFile = new java.net.URL (getCodeBase(), objPath);
 			s = f.load (airFile);
@@ -83,7 +83,7 @@ public class RubeGoldbergSimulation extends Applet {
 
 
       	t3d.setTranslation(new Vector3f(0f,0f,-2f));
-        t3d.setScale(new Vector3d(5f,5f,5f));
+        t3d.setScale(new Vector3d(1f,1f,1f));
         t3d.setRotation(new AxisAngle4f(new Vector3f(1, 0, 0), 270));
       	tg.setTransform(t3d);
       	objRoot.addChild(tg);

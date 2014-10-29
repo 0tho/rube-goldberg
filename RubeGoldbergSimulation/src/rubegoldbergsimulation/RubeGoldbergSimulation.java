@@ -36,6 +36,8 @@ public class RubeGoldbergSimulation extends Applet implements ActionListener, Ke
     Transform3D balloonT3D = new Transform3D();
     
     Vector3d platePos = new Vector3d();
+    Vector3d balloonPos = new Vector3d();
+    Vector3d applePos = new Vector3d();
     
     private Timer timer;
 
@@ -59,6 +61,7 @@ public class RubeGoldbergSimulation extends Applet implements ActionListener, Ke
     {
         appleT3D.setScale(new Vector3d(.05, .05, .05));
         appleT3D.setTranslation(new Vector3d(-.5, .3, 0));
+        applePos = new Vector3d(-.5, .3, 0);
         appleTG.setTransform(appleT3D);
         
         plateT3D.setScale(new Vector3d(.2, .2, .2));
@@ -68,6 +71,7 @@ public class RubeGoldbergSimulation extends Applet implements ActionListener, Ke
         
         balloonT3D.setScale(new Vector3d(1.5, 1, 1));
         balloonT3D.setTranslation(new Vector3d(.5, .25, 0));
+        balloonPos = new Vector3d(.5, .25, 0);
         balloonT3D.setRotation(new AxisAngle4f(new Vector3f(1, 0, 0), 180));
         balloonTG.setTransform(balloonT3D);
         
@@ -142,6 +146,18 @@ public class RubeGoldbergSimulation extends Applet implements ActionListener, Ke
         platePos = new Vector3d(platePos.x + 1.0 / timer.getDelay(), platePos.y, platePos.z);
         plateT3D.setTranslation(platePos);
         plateTG.setTransform(plateT3D);
+        
+        balloonPos = new Vector3d(balloonPos.x, balloonPos.y + 1.0 / timer.getDelay(), balloonPos.y);
+        balloonT3D.setTranslation(balloonPos);
+        balloonTG.setTransform(balloonT3D);
+        
+        applePos = new Vector3d(applePos.x + 1.0 / timer.getDelay(), applePos.y - 0.5 / timer.getDelay(), applePos.z);
+        System.out.println(applePos.y + " / " + platePos.y);
+        appleT3D.setTranslation(applePos);
+        appleTG.setTransform(appleT3D);
+        
+        if(applePos.y <= 0.015)
+            setInitialPositions();
     }
 
     @Override

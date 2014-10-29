@@ -26,6 +26,8 @@ public class RubeGoldbergSimulation extends Applet implements ActionListener, Ke
     public final static String assetsFolder = "src\\art_assets\\";
     SimpleUniverse simpleU;
     
+    BranchGroup objRoot = new BranchGroup();
+    
     TransformGroup appleTG = new TransformGroup();
     TransformGroup plateTG = new TransformGroup();
     TransformGroup balloonTG = new TransformGroup();
@@ -74,19 +76,10 @@ public class RubeGoldbergSimulation extends Applet implements ActionListener, Ke
     }
 
     public BranchGroup createSceneGraph() {
-
-        BranchGroup objRoot = new BranchGroup();
-        appleTG = new TransformGroup();
-        plateTG = new TransformGroup();
-        balloonTG = new TransformGroup();
         
         appleTG.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
         plateTG.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
         balloonTG.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
-        
-        appleT3D = new Transform3D();
-        plateT3D = new Transform3D();
-        balloonT3D = new Transform3D();
         try {
             
             Scene appleScene = null;

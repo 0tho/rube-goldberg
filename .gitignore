@@ -12,5 +12,5 @@
 /RubeGoldbergSimulation/nbproject/private/
 /RubeGoldbergSimulation/build/
 
-./assets/
 assets/
+!RubeGoldbergSimulation/assets

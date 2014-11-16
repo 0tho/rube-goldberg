@@ -18,29 +18,41 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.FileNotFoundException;
 import static java.lang.System.exit;
+import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.Timer;
+import javax.xml.crypto.dsig.Transform;
 
-public class RubeGoldbergSimulation extends Applet implements ActionListener, KeyListener  {
+public class RubeGoldbergSimulation extends Applet implements ActionListener, KeyListener {
 
-    public final static String assetsFolder = "src\\art_assets\\";
+    public final static String assetsFolder = "src/art_assets\\";
     SimpleUniverse simpleU;
-    
+
+    //boolean running = false;
     BranchGroup objRoot = new BranchGroup();
+
+    Vector3d sideViewCameraPos = new Vector3d();
     
-    TransformGroup appleTG = new TransformGroup();
-    TransformGroup plateTG = new TransformGroup();
-    TransformGroup balloonTG = new TransformGroup();
-    Transform3D appleT3D = new Transform3D();
-    Transform3D plateT3D = new Transform3D();
-    Transform3D balloonT3D = new Transform3D();
+    CameraManager cameraManager = null;
     
-    Vector3d platePos = new Vector3d();
-    Vector3d balloonPos = new Vector3d();
-    Vector3d applePos = new Vector3d();
+    Vector3d lookAtPoint = new Vector3d();
+
+    MeshObject apple = null;
+    MeshObject balloon = null;
+    MeshObject plate = null;
     
+    Random rand = null;
+
+
     private Timer timer;
 
+    double deltaTime = 0;
+    double lastTime = 0;
+    
+    
     public RubeGoldbergSimulation() {
     }
 
@@ -55,62 +67,58 @@ public class RubeGoldbergSimulation extends Applet implements ActionListener, Ke
         simpleU.getViewingPlatform().setNominalViewingTransform();
         scene.compile();
         simpleU.addBranchGraph(scene); //add your SceneGraph to the SimpleUniverse   
+        //cameraTG = simpleU.getViewingPlatform().getViewPlatformTransform();
+        cameraManager = new CameraManager(4, simpleU);
+        simpleU.getViewingPlatform().setNominalViewingTransform();
+        
+        rand = new Random();
+        
+        setInitialPositions();
     }
-    
-    private void setInitialPositions()
-    {
-        appleT3D.setScale(new Vector3d(.05, .05, .05));
-        appleT3D.setTranslation(new Vector3d(-.5, .3, 0));
-        applePos = new Vector3d(-.5, .3, 0);
-        appleTG.setTransform(appleT3D);
+    private boolean letBallonGo = false;
+
+    private void setInitialPositions() {
+        letBallonGo = false;
+        apple.setScale(new Vector3d(.05, .05, .05));
+        apple.moveTo(new Vector3d(-1, .8, 0));
         
-        plateT3D.setScale(new Vector3d(.2, .2, .2));
-        plateT3D.setTranslation(new Vector3d(-.5, 0, 0));
-        platePos = new Vector3d(-.5, 0, 0);
-        plateTG.setTransform(plateT3D);
+        apple.setRotX(0);
+        apple.setRotY(0);
+        apple.setRotZ(0);
         
-        balloonT3D.setScale(new Vector3d(1.5, 1, 1));
-        balloonT3D.setTranslation(new Vector3d(.5, .25, 0));
-        balloonPos = new Vector3d(.5, .25, 0);
-        balloonT3D.setRotation(new AxisAngle4f(new Vector3f(1, 0, 0), 180));
-        balloonTG.setTransform(balloonT3D);
+        apple.setRotX(Math.PI);
+
+        plate.setScale(new Vector3d(.2, .2, .2));
+        plate.moveTo(new Vector3d(-1, 0, 0));
+
+        balloon.setScale(new Vector3d(0.5, 0.5, 0.5));
+        balloon.moveTo(new Vector3d(1, 0.5, 0));
+
+        cameraManager.setCameraPosition(0, new Vector3d(0, 0, 3));
+        cameraManager.setCameraPosition(1, new Vector3d(0, 3, 0));
+        cameraManager.setCameraPosition(2, new Vector3d(3, 0, 0));
+        cameraManager.setCameraPosition(3, new Vector3d(0, 0, 3));
         
+        lookAtPoint = apple.getCurrentPosition();
+        for(int i = 0; i < cameraManager.getCount(); i++)
+            cameraManager.setCameraLookAt(i, lookAtPoint);
+
+        cameraManager.setCurrentCamera(0);
+        
+
         //no animation state
         timer.stop();
     }
 
     public BranchGroup createSceneGraph() {
-        
-        appleTG.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
-        plateTG.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
-        balloonTG.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
-        try {
-            
-            Scene appleScene = null;
-            Scene plateScene = null;
-            Scene balloonScene = null;
-            
-            ObjectFile appleFile = new ObjectFile();
-            ObjectFile plateFile = new ObjectFile();
-            ObjectFile balloonFile = new ObjectFile();
-            
-            String applePath = assetsFolder + "apple.obj";
-            String platePath = assetsFolder + "plate.obj";
-            String balloonPath = assetsFolder + "balloon.obj";
-            
-            appleFile.setFlags(ObjectFile.RESIZE | ObjectFile.TRIANGULATE | ObjectFile.STRIPIFY);
-            plateFile.setFlags(ObjectFile.RESIZE | ObjectFile.TRIANGULATE | ObjectFile.STRIPIFY);
-            balloonFile.setFlags(ObjectFile.RESIZE | ObjectFile.TRIANGULATE | ObjectFile.STRIPIFY);
-            
-            appleScene = appleFile.load(applePath);
-            plateScene = plateFile.load(platePath);
-            balloonScene = balloonFile.load(balloonPath);
-            
-            appleTG.addChild(appleScene.getSceneGroup());
-            plateTG.addChild(plateScene.getSceneGroup());
-            balloonTG.addChild(balloonScene.getSceneGroup());
 
-        } catch (java.io.FileNotFoundException ex) {
+        MeshObject.assetsFolderPath = assetsFolder;
+
+        try {
+            apple = new MeshObject("apple.obj", new Vector3d(-1, .3, 0), objRoot, ObjectFile.RESIZE | ObjectFile.TRIANGULATE | ObjectFile.STRIPIFY, new Vector3d(), 0.01);
+            plate = new MeshObject("plate.obj", new Vector3d(-1, 0, 0), objRoot, ObjectFile.RESIZE | ObjectFile.TRIANGULATE | ObjectFile.STRIPIFY, new Vector3d(), 0.01);
+            balloon = new MeshObject("balloon_.obj", new Vector3d(1, .25, 0), objRoot, ObjectFile.RESIZE | ObjectFile.TRIANGULATE | ObjectFile.STRIPIFY, new Vector3d(0, -.5, 0), 0.01);
+        } catch (FileNotFoundException ex) {
             System.err.println(ex);
             exit(1);
         }
@@ -124,40 +132,43 @@ public class RubeGoldbergSimulation extends Applet implements ActionListener, Ke
         ambientLightNode.setInfluencingBounds(bounds);
 
         objRoot.addChild(ambientLightNode);
-        
-        timer = new Timer(100, this);
-        
-        objRoot.addChild(appleTG);
-        objRoot.addChild(plateTG);
-        objRoot.addChild(balloonTG);
-        
-        setInitialPositions();
-        
+
+        timer = new Timer(30, this);
+
         return objRoot;
     }
 
+    @Override
     public void destroy() {
         simpleU.removeAllLocales();
     }
-    
+
     @Override
     public void actionPerformed(ActionEvent e) {
         //animation logic goes here
-        platePos = new Vector3d(platePos.x + 1.0 / timer.getDelay(), platePos.y, platePos.z);
-        plateT3D.setTranslation(platePos);
-        plateTG.setTransform(plateT3D);
-        
-        balloonPos = new Vector3d(balloonPos.x, balloonPos.y + 1.0 / timer.getDelay(), balloonPos.y);
-        balloonT3D.setTranslation(balloonPos);
-        balloonTG.setTransform(balloonT3D);
-        
-        applePos = new Vector3d(applePos.x + 1.0 / timer.getDelay(), applePos.y - 0.5 / timer.getDelay(), applePos.z);
-        System.out.println(applePos.y + " / " + platePos.y);
-        appleT3D.setTranslation(applePos);
-        appleTG.setTransform(appleT3D);
-        
-        if(applePos.y <= 0.015)
-            setInitialPositions();
+        double time =  System.nanoTime() / 10e9;
+        deltaTime = time - lastTime;
+        lastTime = time;
+        if (!letBallonGo) {
+            letBallonGo = balloon.intersects(apple);
+            
+            if (!apple.intersects(plate)) {
+                apple.rot((Math.PI * 4) * deltaTime, new Vector3d(rand.nextDouble() * 100, rand.nextDouble() * 100, rand.nextDouble() * 100));
+                apple.applyMovement(new Vector3d(0, -5 * deltaTime, 0));
+                lookAtPoint = apple.getCurrentPosition();
+            } else {
+                plate.applyMovement(new Vector3d(2 * deltaTime, 0, 0));
+                apple.applyMovement(new Vector3d(2 * deltaTime, 0, 0));
+                lookAtPoint = apple.getCurrentPosition();
+            }
+        } else {
+            balloon.applyMovement(new Vector3d(0, .8 * deltaTime, 0));
+            balloon.rotY((Math.PI * 3) * deltaTime);
+            lookAtPoint = balloon.getCurrentCollisionCenter();
+        }
+
+        for(int i = 0; i < cameraManager.getCount(); i++)
+            cameraManager.setCameraLookAt(i, lookAtPoint);
     }
 
     @Override
@@ -167,12 +178,30 @@ public class RubeGoldbergSimulation extends Applet implements ActionListener, Ke
 
     @Override
     public void keyPressed(KeyEvent e) {
-        if(e.getKeyCode() == KeyEvent.VK_S)
-        {
-            if(timer.isRunning())
+        if (e.getKeyCode() == KeyEvent.VK_S) {
+            if (timer.isRunning()) {
                 setInitialPositions();
-            else
+            } else {
                 timer.start();
+                deltaTime = 0;
+                lastTime = System.nanoTime() / 10e9;
+            }
+        }
+        switch (e.getKeyCode()) {
+            case KeyEvent.VK_S:
+                break;
+            case KeyEvent.VK_1:
+                cameraManager.setCurrentCamera(0);
+                break;
+            case KeyEvent.VK_2:
+                cameraManager.setCurrentCamera(1);
+                break;
+            case KeyEvent.VK_3:
+                cameraManager.setCurrentCamera(2);
+                break;
+            case KeyEvent.VK_4:
+                cameraManager.setCurrentCamera(3);
+                break;
         }
     }
 

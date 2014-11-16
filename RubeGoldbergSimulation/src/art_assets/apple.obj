@@ -1,6 +1,6 @@
 # Max2Obj Version 4.0 Mar 10th, 2001
 #
-mtllib ./apple.mtl
+mtllib apple.mtl
 g
 # object objapple to come ...
 #

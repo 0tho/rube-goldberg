@@ -1,0 +1,43 @@
+# Max2Mtl Version 4.0 Mar 10th, 2001
+#
+newmtl Material.001
+Ka  1.00 0.00 0.00
+Kd  1.00 1.00 1.00
+Ks  0.00 0.00 0.00
+d  1.00
+Ns  10.00
+illum 2
+map_Kd platinum.jpg
+#
+newmtl Material.003
+Ka  1.00 0.00 0.00
+Kd  1.00 1.00 1.00
+Ks  0.00 0.00 0.00
+d  1.00
+Ns  10.00
+illum 2
+map_Kd rubber.jpg
+#
+# EOF
+
+
+# Blender MTL File: 'None'
+# Material Count: 2
+
+#newmtl Material.001
+#Ns 96.078431
+#Ka 0.000000 0.000000 0.000000
+#Kd 0.080878 0.077837 0.081979
+#Ks 0.500000 0.500000 0.500000
+#Ni 1.000000
+#d 1.000000
+#illum 2
+#
+#newmtl Material.003
+#Ns 96.078431
+#Ka 0.000000 0.000000 0.000000
+#Kd 0.202354 0.012910 0.007178
+#Ks 0.500000 0.500000 0.500000
+#Ni 1.000000
+#d 1.000000
+#illum 2

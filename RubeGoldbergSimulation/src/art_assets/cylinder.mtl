@@ -1,0 +1,12 @@
+# Max2Mtl Version 4.0 Mar 10th, 2001
+#
+newmtl Material.001
+Ka  1.00 0.00 0.00
+Kd  1.00 1.00 1.00
+Ks  0.00 0.00 0.00
+d  1.00
+Ns  10.00
+illum 2
+map_Kd stripes.jpg
+#
+# EOF

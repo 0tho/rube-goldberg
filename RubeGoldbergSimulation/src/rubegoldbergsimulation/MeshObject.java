@@ -173,7 +173,7 @@ public class MeshObject {
      * @param rad amount to rotate in rad
      */
     public void rotZ(double rad) {
-        rot(rad, new Vector3d(1, 0, 0));
+        rot(rad, new Vector3d(0, 0, 1));
     }
 
     /**
@@ -183,7 +183,7 @@ public class MeshObject {
      * @param axis axis to rotate around
      */
     public void setRot(double rad, Vector3d axis) {
-        transform3D.setRotation(new Quat4d(axis.x, axis.y, axis.z, rad));
+        transform3D.setRotation(new AxisAngle4d(axis.x, axis.y, axis.z, rad));
         transformGroup.setTransform(transform3D);
     }
 

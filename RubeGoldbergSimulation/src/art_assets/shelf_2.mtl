@@ -1,0 +1,20 @@
+# Blender MTL File: 'None'
+# Material Count: 2
+
+newmtl Material.001
+Ka  1.0 1.0 1.0
+Kd  1.0 1.0 1.0
+Ks  1.0 1.0 1.0
+d  1.0
+Ns  11.3
+illum 2
+map_Kd shelf_wood.jpg
+bump shelf_wood_bump.jpg
+
+newmtl None
+Ka  0.8 0.8 0.8
+Kd  0.8 0.8 0.8
+Ks  1.0 1.0 1.0
+d  1.0
+Ns  11.3
+illum 2

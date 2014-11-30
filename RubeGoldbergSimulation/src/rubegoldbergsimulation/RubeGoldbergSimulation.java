@@ -5,7 +5,6 @@
  */
 package rubegoldbergsimulation;
 
-import java.awt.Frame;
 import java.applet.Applet;
 import java.awt.*;
 import com.sun.j3d.utils.applet.MainFrame;
@@ -13,19 +12,16 @@ import com.sun.j3d.utils.universe.*;
 import javax.media.j3d.*;
 import javax.vecmath.*;
 import com.sun.j3d.loaders.objectfile.ObjectFile;
-import com.sun.j3d.loaders.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.beans.Transient;
 import java.io.FileNotFoundException;
 import static java.lang.System.exit;
 import java.util.Random;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.Timer;
-import javax.xml.crypto.dsig.Transform;
 
 public class RubeGoldbergSimulation extends Applet implements ActionListener, KeyListener {
 
@@ -88,9 +84,52 @@ public class RubeGoldbergSimulation extends Applet implements ActionListener, Ke
     double deltaTime = 0;
     double lastTime = 0;
 
+    //Buttons
+    
+    private Button startStop_btt = new Button("Start");
+    
+    private Button camera1_btt = new Button("1");
+    private Button camera2_btt = new Button("2");
+    private Button camera3_btt = new Button("3");
+    private Button camera4_btt = new Button("4");
+    private Button camera5_btt = new Button("5");
+    
+    private Button apple_btt = new Button("Apple");
+    private Button orange_btt = new Button("Orange");
+    private Button pear_btt = new Button("Pear");
+    
+    private JLabel cameras_txt = new JLabel("Cameras: "); 
+    private JLabel fruits_txt = new JLabel("Fruits: "); 
+    
     public RubeGoldbergSimulation() {
-    }
+        JPanel command_pan = new JPanel();
+        JPanel camera_pan = new JPanel();
+        JPanel fruit_pan = new JPanel();
+        
+//        command_pan.setOpaque(false);
+//        camera_pan.setOpaque(false);
+        
+        command_pan.add(startStop_btt);
+        
+        camera_pan.add(cameras_txt);
+        camera_pan.add(camera1_btt);
+        camera_pan.add(camera2_btt);
+        camera_pan.add(camera3_btt);
+        camera_pan.add(camera4_btt);
+        camera_pan.add(camera5_btt); 
+        
+        fruit_pan.add(fruits_txt);
+        fruit_pan.add(apple_btt);
+        fruit_pan.add(pear_btt);
+        fruit_pan.add(orange_btt);
 
+        add(command_pan);
+        add(camera_pan);
+        add(fruit_pan);
+                
+        startStop_btt.addActionListener(this);
+    }
+    
     @Override
     public void init() {
         setLayout(new BorderLayout());
@@ -312,6 +351,10 @@ public class RubeGoldbergSimulation extends Applet implements ActionListener, Ke
         double time = System.nanoTime() / 10e9;
         deltaTime = time - lastTime;
         lastTime = time;
+        
+        if (e.getSource()== startStop_btt){
+            startStop();
+        }
 
         if(!ballHitFruit)
         {
@@ -422,13 +465,7 @@ public class RubeGoldbergSimulation extends Applet implements ActionListener, Ke
     @Override
     public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_S) {
-            if (timer.isRunning()) {
-                setInitialPositions();
-            } else {
-                timer.start();
-                deltaTime = 0;
-                lastTime = System.nanoTime() / 10e9;
-            }
+            startStop();
         }
         switch (e.getKeyCode()) {
             case KeyEvent.VK_S:
@@ -449,31 +486,14 @@ public class RubeGoldbergSimulation extends Applet implements ActionListener, Ke
                 cameraManager.setCurrentCamera(4);
                 break;
             case KeyEvent.VK_A:
-                if(!timer.isRunning())
-                {
-                    fruit = apple;
-                    apple.moveTo(new Vector3d(-1.65, 1.25, -0.85));
-                    pear.moveTo(new Vector3d(100, 100, 100));
-                    orange.moveTo(new Vector3d(100, 100, 100));
-                }
+                changeFruitToApple();                
                 break;
             case KeyEvent.VK_P:
-                if(!timer.isRunning())
-                {
-                    fruit = pear;
-                    pear.moveTo(new Vector3d(-1.65, 1.25, -0.85));
-                    apple.moveTo(new Vector3d(100, 100, 100));
-                    orange.moveTo(new Vector3d(100, 100, 100));
-                }
+                changeFruitToPear();
+                
                 break;
             case KeyEvent.VK_O:
-                if(!timer.isRunning())
-                {
-                    fruit = orange;
-                    orange.moveTo(new Vector3d(-1.65, 1.25, -0.85));
-                    apple.moveTo(new Vector3d(100, 100, 100));
-                    pear.moveTo(new Vector3d(100, 100, 100));
-                }
+                changeFruitToOrange();                
                 break;
         }
     }
@@ -486,5 +506,46 @@ public class RubeGoldbergSimulation extends Applet implements ActionListener, Ke
     public static void main(String[] args) {
         RubeGoldbergSimulation rgs = new RubeGoldbergSimulation();
         MainFrame frame = new MainFrame(rgs, 1000, 800);
+        
+    }
+    
+    private void startStop(){
+        if (timer.isRunning()) {
+            setInitialPositions();
+        } else {
+            timer.start();
+            deltaTime = 0;
+            lastTime = System.nanoTime() / 10e9;
+        }
+    }
+    
+    private void changeFruitToApple(){
+        if(!timer.isRunning())
+        {
+            fruit = apple;
+            apple.moveTo(new Vector3d(-1.65, 1.25, -0.85));
+            pear.moveTo(new Vector3d(100, 100, 100));
+            orange.moveTo(new Vector3d(100, 100, 100));
+        }
+    }
+    
+    private void changeFruitToPear(){
+        if(!timer.isRunning())
+        {
+            fruit = pear;
+            pear.moveTo(new Vector3d(-1.65, 1.25, -0.85));
+            apple.moveTo(new Vector3d(100, 100, 100));
+            orange.moveTo(new Vector3d(100, 100, 100));
+        }
+    }
+    
+    private void changeFruitToOrange(){
+        if(!timer.isRunning())
+        {
+            fruit = orange;
+            orange.moveTo(new Vector3d(-1.65, 1.25, -0.85));
+            apple.moveTo(new Vector3d(100, 100, 100));
+            pear.moveTo(new Vector3d(100, 100, 100));
+        }
     }
 }

@@ -8,7 +8,10 @@ package rubegoldbergsimulation;
 import com.sun.j3d.loaders.Scene;
 import com.sun.j3d.loaders.objectfile.ObjectFile;
 import java.io.FileNotFoundException;
+import javax.media.j3d.Alpha;
 import javax.media.j3d.BranchGroup;
+import javax.media.j3d.Group;
+import javax.media.j3d.RotationInterpolator;
 import javax.media.j3d.Transform3D;
 import javax.media.j3d.TransformGroup;
 import javax.vecmath.AxisAngle4d;
@@ -35,6 +38,27 @@ public class MeshObject {
     ObjectFile objectFile = null;
 
     private TransformGroup transformGroup = null;
+    
+    private BranchGroup baseBrancGroup = new BranchGroup();
+
+    /**
+     * Gets the transform group for this mesh object
+     * @return 
+     */
+    public TransformGroup getTransformGroup() {
+        return transformGroup;
+    }
+    
+    /**
+     * Current parent of this mesh
+     */
+    public Group currentParent = null;
+
+    public void setParent(Group currentParent) {
+        this.currentParent.removeChild(baseBrancGroup);
+        this.currentParent = currentParent;
+        this.currentParent.addChild(baseBrancGroup);
+    }
 
     private Transform3D transform3D = null;
 
@@ -82,21 +106,38 @@ public class MeshObject {
      * mesh
      * @throws FileNotFoundException if the .obj file wasn't found
      */
-    public MeshObject(String path, Vector3d initialPosition, BranchGroup root, int objectFlags, Vector3d collisionCenter, double boundingSphereRadius) throws FileNotFoundException {
+    public MeshObject(String path, Vector3d initialPosition, Group root, int objectFlags, Vector3d collisionCenter, double boundingSphereRadius) throws FileNotFoundException {
         currentPosition = new Vector3d();
         objectFile = new ObjectFile();
         transformGroup = new TransformGroup();
         transform3D = new Transform3D();
         this.collisionCenter = collisionCenter;
         this.boundingSphereRadius = boundingSphereRadius;
+        
+        currentParent = root;
+        
+        baseBrancGroup.addChild(transformGroup);
+        
+        baseBrancGroup.setCapability(BranchGroup.ALLOW_DETACH);
+        baseBrancGroup.setCapability(TransformGroup.ALLOW_CHILDREN_READ);
+        baseBrancGroup.setCapability(TransformGroup.ALLOW_CHILDREN_WRITE);
+        baseBrancGroup.setCapability(TransformGroup.ALLOW_CHILDREN_EXTEND);
+        baseBrancGroup.setCapability(TransformGroup.ALLOW_BOUNDS_READ);
+        baseBrancGroup.setCapability(TransformGroup.ALLOW_BOUNDS_WRITE);
 
         transformGroup.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
+        transformGroup.setCapability(BranchGroup.ALLOW_DETACH);
+        transformGroup.setCapability(TransformGroup.ALLOW_CHILDREN_READ);
+        transformGroup.setCapability(TransformGroup.ALLOW_CHILDREN_WRITE);
+        transformGroup.setCapability(TransformGroup.ALLOW_CHILDREN_EXTEND);
+        transformGroup.setCapability(TransformGroup.ALLOW_BOUNDS_READ);
+        transformGroup.setCapability(TransformGroup.ALLOW_BOUNDS_WRITE);
 
         objectFile.setFlags(objectFlags);
         scene = objectFile.load(assetsFolderPath + path);
         transformGroup.addChild(scene.getSceneGroup());
 
-        root.addChild(transformGroup);
+        root.addChild(baseBrancGroup);
 
         moveTo(initialPosition);
     }

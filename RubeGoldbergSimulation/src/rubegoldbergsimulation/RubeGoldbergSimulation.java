@@ -18,6 +18,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.beans.Transient;
 import java.io.FileNotFoundException;
 import static java.lang.System.exit;
 import java.util.Random;
@@ -46,8 +47,8 @@ public class RubeGoldbergSimulation extends Applet implements ActionListener, Ke
     MeshObject can = null;
     MeshObject ball = null;
     MeshObject coffee_cup = null;
-    MeshObject rotatingBar = null;
-    MeshObject[] cylinders = new MeshObject[45];
+    MeshObject[] mechanicalArm = new MeshObject[2];
+    MeshObject[] cylinders = new MeshObject[48];
     MeshObject army_truck = null;
     MeshObject platform = null;
     MeshObject table = null;
@@ -55,6 +56,8 @@ public class RubeGoldbergSimulation extends Applet implements ActionListener, Ke
     MeshObject pear = null;
     MeshObject fruit = null;
     MeshObject button = null;
+    MeshObject coffee = null;
+    MeshObject towel = null;
 
     MeshObject shelf = null;
     MeshObject shelf2 = null;
@@ -66,6 +69,8 @@ public class RubeGoldbergSimulation extends Applet implements ActionListener, Ke
     MeshObject ceiling = null;
 
     Random rand = null;
+    
+    TransformGroup groupArm = new TransformGroup();
 
     Vector3d lastCylinderPos;
     Vector3d fruitFallPoint;
@@ -73,6 +78,10 @@ public class RubeGoldbergSimulation extends Applet implements ActionListener, Ke
     boolean fruitOnRamp = true;
     boolean ballHitFruit = false;
     boolean truckRunning = false;
+    boolean buttonActivated = false;
+    boolean coffeeInPlace = false;
+    
+    double mechanicalArmRotatingAngle = 0;
 
     private Timer timer;
 
@@ -107,6 +116,9 @@ public class RubeGoldbergSimulation extends Applet implements ActionListener, Ke
         onCylinders = true;
         fruitOnRamp = true;
         ballHitFruit = false;
+        buttonActivated = false;
+        coffeeInPlace = false;
+        mechanicalArmRotatingAngle = 0;
 
         shelf.setScale(new Vector3d(0.5, 0.5, 0.5));
         shelf.moveTo(new Vector3d(-2, 0.95, -0.5));
@@ -186,16 +198,34 @@ public class RubeGoldbergSimulation extends Applet implements ActionListener, Ke
         cameraManager.setCameraPosition(3, new Vector3d(-3, 0, 0));
         cameraManager.setCameraPosition(4, new Vector3d(0, -1, 3));
 
+        table.setScale(new Vector3d(2, 1, 1));
+        table.moveTo(new Vector3d(0, -2, 0));
+        
+        towel.setScale(new Vector3d(0.4, 1, 0.4));
+        towel.moveTo(new Vector3d(1.75, -1.35, 0));
+        
+        coffee.setScale(new Vector3d(0.1, 0.1, 0.1));
+        coffee.moveTo(new Vector3d(1.65, -1.25, -0.16));
+
+        cameraManager.setCurrentCamera(0);
+        
+        mechanicalArm[1].setScale(new Vector3d(0.8, 0.8, 0.8));
+        
+        mechanicalArm[0].setScale(new Vector3d(0.75, 0.75, 0.75));
+        mechanicalArm[0].moveTo(new Vector3d(2.5, -1.9, 0));
+        
+        coffee.setParent(mechanicalArm[0].getTransformGroup());
+        coffee.setScale(new Vector3d(0.1 / 0.75, 0.1 / 0.75, 0.1 / 0.75));
+        coffee.moveTo(new Vector3d(0, 0.85, 1.1));
+        
+        mechanicalArm[0].setRotY(-3.2 * Math.PI / 4);
+        
         lookAtPoint = fruit.getCurrentPosition();
+        //lookAtPoint = mechanicalArm[0].getCurrentPosition();
+        
         for (int i = 0; i < cameraManager.getCount(); i++) {
             cameraManager.setCameraLookAt(i, lookAtPoint);
         }
-
-        table.setScale(new Vector3d(2, 1, 1));
-        table.moveTo(new Vector3d(0, -2, 0));
-
-        cameraManager.setCurrentCamera(0);
-
         //no animation state
         timer.stop();
     }
@@ -203,8 +233,17 @@ public class RubeGoldbergSimulation extends Applet implements ActionListener, Ke
     public BranchGroup createSceneGraph() {
 
         MeshObject.assetsFolderPath = assetsFolder;
+        
+        objRoot.setCapability(BranchGroup.ALLOW_DETACH);
+        objRoot.setCapability(BranchGroup.ALLOW_CHILDREN_READ);
+        objRoot.setCapability(BranchGroup.ALLOW_CHILDREN_WRITE);
+        objRoot.setCapability(BranchGroup.ALLOW_CHILDREN_EXTEND);
+        objRoot.setCapability(BranchGroup.ALLOW_BOUNDS_READ);
+        objRoot.setCapability(BranchGroup.ALLOW_BOUNDS_WRITE);
 
         try {
+            groupArm.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
+            objRoot.addChild(groupArm);
             apple = new MeshObject("apple.obj", new Vector3d(-1, .3, 0), objRoot, ObjectFile.RESIZE | ObjectFile.TRIANGULATE | ObjectFile.STRIPIFY, new Vector3d(), 0.08);
             pear = new MeshObject("pear.obj", new Vector3d(-1.3, .3, 0), objRoot, ObjectFile.RESIZE | ObjectFile.TRIANGULATE | ObjectFile.STRIPIFY, new Vector3d(), 0.08);
             orange = new MeshObject("orange.obj", new Vector3d(-1.3, .3, 0), objRoot, ObjectFile.RESIZE | ObjectFile.TRIANGULATE | ObjectFile.STRIPIFY, new Vector3d(), 0.08);
@@ -213,7 +252,11 @@ public class RubeGoldbergSimulation extends Applet implements ActionListener, Ke
 
             ball = new MeshObject("soccer_ball.obj", new Vector3d(1, .25, 0), objRoot, ObjectFile.RESIZE | ObjectFile.TRIANGULATE | ObjectFile.STRIPIFY, new Vector3d(0, 0, 0), 0.025);
             
-            rotatingBar = new MeshObject("lever.obj", new Vector3d(100, .25, 0), objRoot, ObjectFile.RESIZE | ObjectFile.TRIANGULATE | ObjectFile.STRIPIFY, new Vector3d(0, -.5, 0), 0.01);
+            mechanicalArm[0] = new MeshObject("mechanical_armA.obj", new Vector3d(0, 0, 0), objRoot, ObjectFile.RESIZE | ObjectFile.TRIANGULATE | ObjectFile.STRIPIFY, new Vector3d(0, -.5, 0), 0.01);
+            mechanicalArm[1] = new MeshObject("mechanical_armB.obj", new Vector3d(0, 0.85, 0.5), mechanicalArm[0].getTransformGroup(), ObjectFile.RESIZE | ObjectFile.TRIANGULATE | ObjectFile.STRIPIFY, new Vector3d(0, -.5, 0), 0.01);            
+            
+            //groupArm.addChild(mechanicalArm[0].transformGroup);
+            
             for (int i = 0; i < cylinders.length; i++) {
                 cylinders[i] = new MeshObject("tex_cylinder.obj", new Vector3d(-1.8 + 0.07 * i, -1.30, 0.15), objRoot, ObjectFile.RESIZE | ObjectFile.TRIANGULATE | ObjectFile.STRIPIFY, new Vector3d(0, 0, 0), 0.01);
             }
@@ -230,6 +273,8 @@ public class RubeGoldbergSimulation extends Applet implements ActionListener, Ke
             shelf2 = new MeshObject("shelf_2.obj", new Vector3d(0, 0, -1), objRoot, ObjectFile.RESIZE | ObjectFile.TRIANGULATE | ObjectFile.STRIPIFY, new Vector3d(), 0.01);
             floor = new MeshObject("floor.obj", new Vector3d(0, 0, -1), objRoot, ObjectFile.RESIZE | ObjectFile.TRIANGULATE | ObjectFile.STRIPIFY, new Vector3d(), 0.01);
             ceiling = new MeshObject("ceiling.obj", new Vector3d(0, 0, -1), objRoot, ObjectFile.RESIZE | ObjectFile.TRIANGULATE | ObjectFile.STRIPIFY, new Vector3d(), 0.01);
+            coffee = new MeshObject("cup2.obj", new Vector3d(1, .25, 0), mechanicalArm[0].getTransformGroup(), ObjectFile.RESIZE | ObjectFile.TRIANGULATE | ObjectFile.STRIPIFY, new Vector3d(-.05, 0, 0), 0.1);
+            towel = new MeshObject("towel.obj", new Vector3d(1, .25, 0), objRoot, ObjectFile.RESIZE | ObjectFile.TRIANGULATE | ObjectFile.STRIPIFY, new Vector3d(-.05, 0, 0), 0.1);
         } catch (FileNotFoundException ex) {
             System.err.println(ex);
             exit(1);
@@ -260,7 +305,7 @@ public class RubeGoldbergSimulation extends Applet implements ActionListener, Ke
     public void destroy() {
         simpleU.removeAllLocales();
     }
-
+    
     @Override
     public void actionPerformed(ActionEvent e) {
         //animation logic goes here
@@ -280,19 +325,20 @@ public class RubeGoldbergSimulation extends Applet implements ActionListener, Ke
                 if(fruit.intersects(fruitFallPoint, 0.01))
                     fruitOnRamp = false;
                 fruit.rotX((Math.PI * 10) * deltaTime);
-                fruit.applyMovement(new Vector3d(0, 4 * -0.58 * deltaTime, 4 * 0.807 * deltaTime));
+                fruit.applyMovement(new Vector3d(0, 5 * -0.58 * deltaTime, 5 * 0.807 * deltaTime));
             }
             else
             {
                 fruit.rotX((Math.PI * 12) * deltaTime);
                 fruit.rotZ((Math.PI * 10) * rand.nextDouble() * deltaTime);
-                fruit.applyMovement(new Vector3d(0, -7.5 * deltaTime, 0));
+                fruit.applyMovement(new Vector3d(0, -9 * deltaTime, 0));
             }
             lookAtPoint = fruit.getCurrentPosition();
         } else {
             if (onCylinders) {
-                plate.applyMovement(new Vector3d(2.5 * deltaTime, 0, 0));
-                fruit.applyMovement(new Vector3d(2.5 * deltaTime, 0, 0));
+                plate.applyMovement(new Vector3d(3.5 * deltaTime, 0, 0));
+                fruit.applyMovement(new Vector3d(3.5 * deltaTime, 0, 0));
+                
                 lookAtPoint = fruit.getCurrentPosition();
 
                 onCylinders = !plate.intersects(lastCylinderPos, 0.1);
@@ -306,18 +352,43 @@ public class RubeGoldbergSimulation extends Applet implements ActionListener, Ke
                 {
                     truckRunning = army_truck.intersects(balloon);
                 }
-                
-                if(!army_truck.intersects(button) && truckRunning)
+                else if(!buttonActivated)
                 {
-                    army_truck.applyMovement(new Vector3d(10 * deltaTime, 0, 0));
+                    army_truck.applyMovement(new Vector3d(4 * deltaTime, 0, 0));
+                    buttonActivated = army_truck.intersects(button);
+                }
+                else
+                {
+                    if(!coffeeInPlace)
+                    {
+                        mechanicalArmRotatingAngle += deltaTime * Math.PI * 4;
+                        coffeeInPlace = mechanicalArmRotatingAngle >= Math.PI / 5;
+                        mechanicalArm[0].rotY(deltaTime * Math.PI * 4);
+                        if(coffeeInPlace)
+                        {
+                            coffee.setParent(objRoot);
+                            coffee.setScale(new Vector3d(0.1, 0.1, 0.1));
+                            coffee.moveTo(new Vector3d(1.68, -1.25, -0.18));
+                        }
+                    }
+                    else
+                    {
+                        if(mechanicalArmRotatingAngle > 0)
+                        {
+                            mechanicalArmRotatingAngle -= deltaTime * Math.PI * 4;
+                            mechanicalArm[0].rotY(-deltaTime * Math.PI * 4);
+                        }
+                    }
                 }
             } else {
                 if (plate.getCurrentPosition().y - table.getCurrentPosition().y > 0.7) {
-                    plate.applyMovement(new Vector3d(3 * deltaTime, -5 * deltaTime, 0));
-                    fruit.applyMovement(new Vector3d(3 * deltaTime, -5 * deltaTime, 0));
+                    plate.applyMovement(new Vector3d(4 * deltaTime, -5 * deltaTime, 0));
+                    fruit.applyMovement(new Vector3d(4 * deltaTime, -5 * deltaTime, 0));
                 }
             }
         }
+
+        //lookAtPoint = mechanicalArm[0].getCurrentPosition();
 
         /*if (!letBallonGo) {
          letBallonGo = balloon.intersects(apple);

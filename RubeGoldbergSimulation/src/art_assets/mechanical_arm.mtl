@@ -1,0 +1,29 @@
+# Blender MTL File: 'mechanical arm2.blend'
+# Material Count: 3
+
+newmtl None
+Ka  1.0 1.0 1.0
+Kd  1.0 1.0 1.0
+Ks  0.1 0.1 0.1
+d  1.0
+Ns  10.0
+illum 2
+map_Kd metal_silver.jpg
+
+newmtl None_black_metal.jpg
+Ka  1.0 1.0 1.0
+Kd  1.0 1.0 1.0
+Ks  0.1 0.1 0.1
+d  1.0
+Ns  10.0
+illum 2
+map_Kd black_metal.jpg
+
+newmtl None_platinum.jpg
+Ka  1.0 1.0 1.0
+Kd  1.0 1.0 1.0
+Ks  0.1 0.1 0.1
+d  1.0
+Ns  10.0
+illum 2
+map_Kd platinum.jpg

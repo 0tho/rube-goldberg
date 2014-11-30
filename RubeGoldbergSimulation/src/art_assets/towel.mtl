@@ -1,0 +1,20 @@
+# Blender MTL File: 'None'
+# Material Count: 2
+
+newmtl Material
+Ka  0.8 0.8 0.8
+Kd  1.0 1.0 1.0
+Ks  0.50 0.50 0.50
+d  1.0
+Ns  10.0
+illum 2
+map_Kd picnictex.jpg
+
+newmtl Material_picnictex.jpg
+Ka  0.8 0.8 0.8
+Kd  1.0 1.0 1.0
+Ks  0.50 0.50 0.50
+d  1.0
+Ns  10.0
+illum 2
+map_Kd picnictex.jpg

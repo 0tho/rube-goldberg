@@ -1,0 +1,18 @@
+# Blender MTL File: 'None'
+# Material Count: 2
+
+newmtl mia_material_x1SG
+Ka  0.8 0.8 0.8
+Kd  1.0 1.0 1.0
+Ks  0.50 0.50 0.50
+d  1.0
+Ns  96.3
+illum 2
+
+newmtl mia_material_x2SG
+Ka  0.233622 0.216985 0.000000
+Kd  0.63622 0.46985 0.100000
+Ks  0.50 0.50 0.50
+d  1.0
+Ns  96.3
+illum 2

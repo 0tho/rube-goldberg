@@ -128,6 +128,14 @@ public class RubeGoldbergSimulation extends Applet implements ActionListener, Ke
         add(fruit_pan);
                 
         startStop_btt.addActionListener(this);
+        camera1_btt.addActionListener(this);
+        camera2_btt.addActionListener(this);
+        camera3_btt.addActionListener(this);
+        camera4_btt.addActionListener(this);
+        camera5_btt.addActionListener(this);
+        apple_btt.addActionListener(this);
+        pear_btt.addActionListener(this);
+        orange_btt.addActionListener(this);
     }
     
     @Override
@@ -352,11 +360,25 @@ public class RubeGoldbergSimulation extends Applet implements ActionListener, Ke
         deltaTime = time - lastTime;
         lastTime = time;
         
-        if (e.getSource()== startStop_btt){
-            startStop();
-        }
-
-        if(!ballHitFruit)
+        if (e.getSource() == startStop_btt){
+           startStop();
+        }else if (e.getSource() == camera1_btt){
+            cameraManager.setCurrentCamera(0);
+        }else if (e.getSource() == camera2_btt){
+            cameraManager.setCurrentCamera(1);
+        }else if (e.getSource() == camera3_btt){
+            cameraManager.setCurrentCamera(2);
+        }else if (e.getSource() == camera4_btt){
+            cameraManager.setCurrentCamera(3);
+        }else if (e.getSource() == camera5_btt){
+            cameraManager.setCurrentCamera(4);
+        }else if (e.getSource() == apple_btt){
+            changeFruitToApple();
+        }else if (e.getSource() == pear_btt){
+            changeFruitToPear();
+        }else if (e.getSource() == orange_btt){
+            changeFruitToOrange();
+        }else if(!ballHitFruit)
         {
             ballHitFruit = ball.intersects(fruit);
             ball.rotZ((Math.PI * -10) * deltaTime);

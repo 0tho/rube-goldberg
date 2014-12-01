@@ -56,6 +56,10 @@ public class RubeGoldbergSimulation extends Applet implements ActionListener, Ke
     MeshObject milk = null;
     MeshObject tea = null;
     MeshObject beverage = null;
+    
+    MeshObject toaster = null;
+    MeshObject toast = null;
+    
     MeshObject towel = null;
 
     MeshObject shelf = null;
@@ -79,8 +83,11 @@ public class RubeGoldbergSimulation extends Applet implements ActionListener, Ke
     boolean truckRunning = false;
     boolean buttonActivated = false;
     boolean coffeeInPlace = false;
-    
+    boolean toastGoingDown = false;
+
     double mechanicalArmRotatingAngle = 0;
+    double yToastSpeed = 20;
+    double xToastAngle = 0;
 
     private Timer timer;
 
@@ -187,6 +194,7 @@ public class RubeGoldbergSimulation extends Applet implements ActionListener, Ke
         ballHitFruit = false;
         buttonActivated = false;
         coffeeInPlace = false;
+        toastGoingDown = false;
         mechanicalArmRotatingAngle = 0;
 
         shelf.setScale(new Vector3d(0.5, 0.5, 0.5));
@@ -297,8 +305,15 @@ public class RubeGoldbergSimulation extends Applet implements ActionListener, Ke
         
         mechanicalArm[0].setRotY(-3.2 * Math.PI / 4);
         
+        toast.setParent(toaster.getTransformGroup());
+        toast.setScale(new Vector3d(0.6, 0.6, 0.6));
+        toast.moveTo(new Vector3d(-0.1, 0, 0.15));
+        toast.setRotX(0);
+        
+        toaster.setScale(new Vector3d(0.2, 0.2, 0.2));
+        toaster.moveTo(new Vector3d(0.9, -1.2, -0.2));
+        
         lookAtPoint = fruit.getCurrentPosition();
-        //lookAtPoint = mechanicalArm[0].getCurrentPosition();
         
         cameraManager.setCameraLookAt(0, lookAtPoint);
         cameraManager.setCameraLookAt(1, fruit.getCurrentPosition());
@@ -356,6 +371,8 @@ public class RubeGoldbergSimulation extends Applet implements ActionListener, Ke
             coffee = new MeshObject("cup2.obj", new Vector3d(1, .25, 0), mechanicalArm[0].getTransformGroup(), ObjectFile.RESIZE | ObjectFile.TRIANGULATE | ObjectFile.STRIPIFY, new Vector3d(-.05, 0, 0), 0.1);
             tea = new MeshObject("cup3.obj", new Vector3d(1, .25, 0), mechanicalArm[0].getTransformGroup(), ObjectFile.RESIZE | ObjectFile.TRIANGULATE | ObjectFile.STRIPIFY, new Vector3d(-.05, 0, 0), 0.1);
             towel = new MeshObject("towel.obj", new Vector3d(1, .25, 0), objRoot, ObjectFile.RESIZE | ObjectFile.TRIANGULATE | ObjectFile.STRIPIFY, new Vector3d(-.05, 0, 0), 0.1);
+            toaster = new MeshObject("toaster.obj", new Vector3d(0, 0, 0), objRoot, ObjectFile.RESIZE | ObjectFile.TRIANGULATE | ObjectFile.STRIPIFY, new Vector3d(-.05, 0, 0), 0.1);
+            toast = new MeshObject("toast.obj", new Vector3d(0, 0, 0), objRoot, ObjectFile.RESIZE | ObjectFile.TRIANGULATE | ObjectFile.STRIPIFY, new Vector3d(-.05, 0, 0), 0.2);
         } catch (FileNotFoundException ex) {
             System.err.println(ex);
             exit(1);
@@ -432,9 +449,34 @@ public class RubeGoldbergSimulation extends Applet implements ActionListener, Ke
                     lookAtPoint = army_truck.getCurrentPosition();
                     army_truck.applyMovement(new Vector3d(4 * deltaTime, 0, 0));
                     buttonActivated = army_truck.intersects(button);
+                    
+                    if(buttonActivated)
+                    {
+                        toast.moveTo(new Vector3d(-0.1, 1, 0.15));
+                        yToastSpeed = 10;
+                        xToastAngle = 0;
+                    }
                 }
                 else
                 {
+                    if(toast.getCurrentPosition().y < 0)
+                    {
+                         toast.applyMovement(new Vector3d(3.5 * deltaTime, 0, 0));
+                    }
+                    else
+                    {
+                        yToastSpeed -= 90 * deltaTime;
+                        toast.applyMovement(new Vector3d(0, yToastSpeed * deltaTime, 5 * deltaTime));
+                        toast.rotX(21 * deltaTime * Math.PI);
+                        if(toast.getCurrentPosition().y < 0)
+                        {
+                            toast.setParent(objRoot);
+                            toast.moveTo(new Vector3d(plate.getCurrentPosition().x - 0.1, plate.getCurrentPosition().y + 0.05, plate.getCurrentPosition().z));
+                            toast.setRotX(Math.PI / 2);
+                            toast.rotY(-Math.PI / 20);
+                            toast.setScale(new Vector3d(0.12, 0.12, 0.12));
+                        }
+                    }
                     if(!coffeeInPlace)
                     {
                         mechanicalArmRotatingAngle += deltaTime * Math.PI * 4;
@@ -460,6 +502,7 @@ public class RubeGoldbergSimulation extends Applet implements ActionListener, Ke
                 if (plate.getCurrentPosition().y - table.getCurrentPosition().y > 0.7) {
                     plate.applyMovement(new Vector3d(4 * deltaTime, -5 * deltaTime, 0));
                     fruit.applyMovement(new Vector3d(4 * deltaTime, -5 * deltaTime, 0));
+                    toast.applyMovement(new Vector3d(4 * deltaTime, -5 * deltaTime, 0));
                 }
             }
         }

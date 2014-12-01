@@ -1,0 +1,10 @@
+# Blender MTL File: 'None'
+# Material Count: 1
+
+newmtl material151
+Ka 0 0 0
+Kd 1 1 1
+Ks 0.0 0.0 0.0
+illum 2
+Ns 32
+map_Kd toast.jpg

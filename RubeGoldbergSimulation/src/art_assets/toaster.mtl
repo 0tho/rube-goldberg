@@ -1,0 +1,50 @@
+# Blender MTL File: 'toaster.blend'
+# Material Count: 6
+
+newmtl Material.001
+Ka  0.1 0.1 0.1
+Kd  0.24 0.24 0.24
+Ks  0.50 0.50 0.50
+d  1.0
+Ns  96.3
+illum 2
+
+newmtl Material.002
+Ka  0.1 0.1 0.1
+Kd  0.24 0.24 0.24
+Ks  0.50 0.50 0.50
+d  1.0
+Ns  96.3
+illum 2
+
+newmtl Material.003
+Ka  0.5 0.0 0.0
+Kd  0.8 0.0 0.24
+Ks  0.50 0.50 0.50
+d  1.0
+Ns  96.3
+illum 2
+
+newmtl Material.004
+Ka 0.000000 0.000000 0.000000
+Kd 0.000000 0.640000 0.056653
+Ks 0.500000 0.500000 0.500000
+d  1.0
+Ns  96.3
+illum 2
+
+newmtl Material.005
+Ka 0.000000 0.000000 0.000000
+Kd 0.102550 0.106291 0.103486
+Ks 0.500000 0.500000 0.500000
+d  1.0
+Ns  96.3
+illum 2
+
+newmtl Material.006
+Ka 0.000000 0.000000 0.000000
+Kd 0.000000 0.003298 0.147575
+Ks 0.500000 0.500000 0.500000
+d  1.0
+Ns  96.3
+illum 2

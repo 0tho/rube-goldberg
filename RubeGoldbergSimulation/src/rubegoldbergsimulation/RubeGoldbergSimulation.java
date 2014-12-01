@@ -98,13 +98,20 @@ public class RubeGoldbergSimulation extends Applet implements ActionListener, Ke
     private Button orange_btt = new Button("Orange");
     private Button pear_btt = new Button("Pear");
     
+    private Button coffee_btt = new Button("Coffee");
+    private Button tea_btt = new Button("Tea");
+    private Button milk_btt = new Button("Milk");
+    
     private JLabel cameras_txt = new JLabel("Cameras: "); 
     private JLabel fruits_txt = new JLabel("Fruits: "); 
+    private JLabel beverage_txt = new JLabel("Beverages: ");
+    
     
     public RubeGoldbergSimulation() {
         JPanel command_pan = new JPanel();
         JPanel camera_pan = new JPanel();
         JPanel fruit_pan = new JPanel();
+        JPanel beverage_pan = new JPanel();
         
 //        command_pan.setOpaque(false);
 //        camera_pan.setOpaque(false);
@@ -122,20 +129,32 @@ public class RubeGoldbergSimulation extends Applet implements ActionListener, Ke
         fruit_pan.add(apple_btt);
         fruit_pan.add(pear_btt);
         fruit_pan.add(orange_btt);
+        
+        beverage_pan.add(beverage_txt);
+        beverage_pan.add(coffee_btt);
+        beverage_pan.add(tea_btt);
+        beverage_pan.add(milk_btt);
 
         add(command_pan);
         add(camera_pan);
         add(fruit_pan);
+        add(beverage_pan);
                 
         startStop_btt.addActionListener(this);
+        
         camera1_btt.addActionListener(this);
         camera2_btt.addActionListener(this);
         camera3_btt.addActionListener(this);
         camera4_btt.addActionListener(this);
         camera5_btt.addActionListener(this);
+        
         apple_btt.addActionListener(this);
         pear_btt.addActionListener(this);
         orange_btt.addActionListener(this);
+        
+        coffee_btt.addActionListener(this);
+        tea_btt.addActionListener(this);
+        milk_btt.addActionListener(this);
     }
     
     @Override
@@ -353,32 +372,8 @@ public class RubeGoldbergSimulation extends Applet implements ActionListener, Ke
         simpleU.removeAllLocales();
     }
     
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        //animation logic goes here
-        double time = System.nanoTime() / 10e9;
-        deltaTime = time - lastTime;
-        lastTime = time;
-        
-        if (e.getSource() == startStop_btt){
-           startStop();
-        }else if (e.getSource() == camera1_btt){
-            cameraManager.setCurrentCamera(0);
-        }else if (e.getSource() == camera2_btt){
-            cameraManager.setCurrentCamera(1);
-        }else if (e.getSource() == camera3_btt){
-            cameraManager.setCurrentCamera(2);
-        }else if (e.getSource() == camera4_btt){
-            cameraManager.setCurrentCamera(3);
-        }else if (e.getSource() == camera5_btt){
-            cameraManager.setCurrentCamera(4);
-        }else if (e.getSource() == apple_btt){
-            changeFruitToApple();
-        }else if (e.getSource() == pear_btt){
-            changeFruitToPear();
-        }else if (e.getSource() == orange_btt){
-            changeFruitToOrange();
-        }else if(!ballHitFruit)
+    private void timerEvents(double deltaTime){
+        if(!ballHitFruit)
         {
             ballHitFruit = ball.intersects(fruit);
             ball.rotZ((Math.PI * -10) * deltaTime);
@@ -478,6 +473,48 @@ public class RubeGoldbergSimulation extends Applet implements ActionListener, Ke
             cameraManager.setCameraLookAt(i, lookAtPoint);
         }
     }
+    
+    private void buttonEvents(Object source){
+        if (source == startStop_btt){
+           startStop();
+        }else if (source == camera1_btt){
+            cameraManager.setCurrentCamera(0);
+        }else if (source == camera2_btt){
+            cameraManager.setCurrentCamera(1);
+        }else if (source == camera3_btt){
+            cameraManager.setCurrentCamera(2);
+        }else if (source == camera4_btt){
+            cameraManager.setCurrentCamera(3);
+        }else if (source == camera5_btt){
+            cameraManager.setCurrentCamera(4);
+        }else if (source == apple_btt){
+            changeFruitToApple();
+        }else if (source == pear_btt){
+            changeFruitToPear();
+        }else if (source == orange_btt){
+            changeFruitToOrange();
+        }else if (source == coffee_btt){
+            changeBeverageToCoffee();
+        }else if (source == tea_btt){
+            changeBeverageToTea();
+        }else if (source == milk_btt){
+            changeBeverageToMilk();
+        }
+    }
+    
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        //animation logic goes here
+        double time = System.nanoTime() / 10e9;
+        deltaTime = time - lastTime;
+        lastTime = time;
+        
+        if(e.getSource() == timer){
+            timerEvents(deltaTime);
+        }else{
+            buttonEvents(e.getSource());
+        }        
+    }
 
     @Override
     public void keyTyped(KeyEvent e) {
@@ -534,10 +571,14 @@ public class RubeGoldbergSimulation extends Applet implements ActionListener, Ke
     private void startStop(){
         if (timer.isRunning()) {
             setInitialPositions();
+            
+            startStop_btt.setLabel("Start");
         } else {
             timer.start();
             deltaTime = 0;
             lastTime = System.nanoTime() / 10e9;
+            
+            startStop_btt.setLabel("Stop");
         }
     }
     
@@ -568,6 +609,27 @@ public class RubeGoldbergSimulation extends Applet implements ActionListener, Ke
             orange.moveTo(new Vector3d(-1.65, 1.25, -0.85));
             apple.moveTo(new Vector3d(100, 100, 100));
             pear.moveTo(new Vector3d(100, 100, 100));
+        }
+    }
+    
+    private void changeBeverageToCoffee(){
+        if(!timer.isRunning())
+        {
+            //TODO: Change beverage to Coffe
+        }
+    }
+
+    private void changeBeverageToTea(){
+        if(!timer.isRunning())
+        {
+            //TODO: Change beverage to Tea
+        }
+    }
+
+    private void changeBeverageToMilk(){
+        if(!timer.isRunning())
+        {
+            //TODO: Change beverage to Milk
         }
     }
 }

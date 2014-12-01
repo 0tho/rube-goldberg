@@ -53,6 +53,9 @@ public class RubeGoldbergSimulation extends Applet implements ActionListener, Ke
     MeshObject fruit = null;
     MeshObject button = null;
     MeshObject coffee = null;
+    MeshObject milk = null;
+    MeshObject tea = null;
+    MeshObject beverage = null;
     MeshObject towel = null;
 
     MeshObject shelf = null;
@@ -88,11 +91,11 @@ public class RubeGoldbergSimulation extends Applet implements ActionListener, Ke
     
     private Button startStop_btt = new Button("Start");
     
-    private Button camera1_btt = new Button("1");
-    private Button camera2_btt = new Button("2");
-    private Button camera3_btt = new Button("3");
-    private Button camera4_btt = new Button("4");
-    private Button camera5_btt = new Button("5");
+    private Button camera1_btt = new Button("Main");
+    private Button camera2_btt = new Button("Fruit");
+    private Button camera3_btt = new Button("Plate");
+    private Button camera4_btt = new Button("Truck");
+    private Button camera5_btt = new Button("Beverage");
     
     private Button apple_btt = new Button("Apple");
     private Button orange_btt = new Button("Orange");
@@ -260,9 +263,9 @@ public class RubeGoldbergSimulation extends Applet implements ActionListener, Ke
 
         cameraManager.setCameraPosition(0, new Vector3d(0, 1, 3));
         cameraManager.setCameraPosition(1, new Vector3d(0, 4, 3));
-        cameraManager.setCameraPosition(2, new Vector3d(3, 0, 0));
-        cameraManager.setCameraPosition(3, new Vector3d(-3, 0, 0));
-        cameraManager.setCameraPosition(4, new Vector3d(0, -1, 3));
+        cameraManager.setCameraPosition(2, new Vector3d(0, 4, 3));
+        cameraManager.setCameraPosition(3, new Vector3d(0, 4, 3));
+        cameraManager.setCameraPosition(4, new Vector3d(0, 4, 3));
 
         table.setScale(new Vector3d(2, 1, 1));
         table.moveTo(new Vector3d(0, -2, 0));
@@ -270,28 +273,38 @@ public class RubeGoldbergSimulation extends Applet implements ActionListener, Ke
         towel.setScale(new Vector3d(0.4, 1, 0.4));
         towel.moveTo(new Vector3d(1.75, -1.35, 0));
         
+        milk.setScale(new Vector3d(0.1, 0.1, 0.1));
+        milk.moveTo(new Vector3d(100.65, -1.25, -0.16));
+        
         coffee.setScale(new Vector3d(0.1, 0.1, 0.1));
-        coffee.moveTo(new Vector3d(1.65, -1.25, -0.16));
+        coffee.moveTo(new Vector3d(100.65, -1.25, -0.16));
+        
+        tea.setScale(new Vector3d(0.1, 0.1, 0.1));
+        tea.moveTo(new Vector3d(100.65, -1.25, -0.16));
 
         cameraManager.setCurrentCamera(0);
         
         mechanicalArm[1].setScale(new Vector3d(0.8, 0.8, 0.8));
         
+        beverage = coffee;
+        
         mechanicalArm[0].setScale(new Vector3d(0.75, 0.75, 0.75));
         mechanicalArm[0].moveTo(new Vector3d(2.5, -1.9, 0));
         
-        coffee.setParent(mechanicalArm[0].getTransformGroup());
-        coffee.setScale(new Vector3d(0.1 / 0.75, 0.1 / 0.75, 0.1 / 0.75));
-        coffee.moveTo(new Vector3d(0, 0.85, 1.1));
+        beverage.setParent(mechanicalArm[0].getTransformGroup());
+        beverage.setScale(new Vector3d(0.1 / 0.75, 0.1 / 0.75, 0.1 / 0.75));
+        beverage.moveTo(new Vector3d(0, 0.85, 1.1));
         
         mechanicalArm[0].setRotY(-3.2 * Math.PI / 4);
         
         lookAtPoint = fruit.getCurrentPosition();
         //lookAtPoint = mechanicalArm[0].getCurrentPosition();
         
-        for (int i = 0; i < cameraManager.getCount(); i++) {
-            cameraManager.setCameraLookAt(i, lookAtPoint);
-        }
+        cameraManager.setCameraLookAt(0, lookAtPoint);
+        cameraManager.setCameraLookAt(1, fruit.getCurrentPosition());
+        cameraManager.setCameraLookAt(2, plate.getCurrentPosition());
+        cameraManager.setCameraLookAt(3, army_truck.getCurrentPosition());
+        cameraManager.setCameraLookAt(4, mechanicalArm[0].getCurrentPosition());
         //no animation state
         timer.stop();
     }
@@ -339,7 +352,9 @@ public class RubeGoldbergSimulation extends Applet implements ActionListener, Ke
             shelf2 = new MeshObject("shelf_2.obj", new Vector3d(0, 0, -1), objRoot, ObjectFile.RESIZE | ObjectFile.TRIANGULATE | ObjectFile.STRIPIFY, new Vector3d(), 0.01);
             floor = new MeshObject("floor.obj", new Vector3d(0, 0, -1), objRoot, ObjectFile.RESIZE | ObjectFile.TRIANGULATE | ObjectFile.STRIPIFY, new Vector3d(), 0.01);
             ceiling = new MeshObject("ceiling.obj", new Vector3d(0, 0, -1), objRoot, ObjectFile.RESIZE | ObjectFile.TRIANGULATE | ObjectFile.STRIPIFY, new Vector3d(), 0.01);
+            milk = new MeshObject("cup.obj", new Vector3d(1, .25, 0), mechanicalArm[0].getTransformGroup(), ObjectFile.RESIZE | ObjectFile.TRIANGULATE | ObjectFile.STRIPIFY, new Vector3d(-.05, 0, 0), 0.1);
             coffee = new MeshObject("cup2.obj", new Vector3d(1, .25, 0), mechanicalArm[0].getTransformGroup(), ObjectFile.RESIZE | ObjectFile.TRIANGULATE | ObjectFile.STRIPIFY, new Vector3d(-.05, 0, 0), 0.1);
+            tea = new MeshObject("cup3.obj", new Vector3d(1, .25, 0), mechanicalArm[0].getTransformGroup(), ObjectFile.RESIZE | ObjectFile.TRIANGULATE | ObjectFile.STRIPIFY, new Vector3d(-.05, 0, 0), 0.1);
             towel = new MeshObject("towel.obj", new Vector3d(1, .25, 0), objRoot, ObjectFile.RESIZE | ObjectFile.TRIANGULATE | ObjectFile.STRIPIFY, new Vector3d(-.05, 0, 0), 0.1);
         } catch (FileNotFoundException ex) {
             System.err.println(ex);
@@ -389,7 +404,7 @@ public class RubeGoldbergSimulation extends Applet implements ActionListener, Ke
             }
             else
             {
-                fruit.rotX((Math.PI * 12) * deltaTime);
+                fruit.rotX((Math.PI * 18) * deltaTime);
                 fruit.rotZ((Math.PI * 10) * rand.nextDouble() * deltaTime);
                 fruit.applyMovement(new Vector3d(0, -9 * deltaTime, 0));
             }
@@ -414,6 +429,7 @@ public class RubeGoldbergSimulation extends Applet implements ActionListener, Ke
                 }
                 else if(!buttonActivated)
                 {
+                    lookAtPoint = army_truck.getCurrentPosition();
                     army_truck.applyMovement(new Vector3d(4 * deltaTime, 0, 0));
                     buttonActivated = army_truck.intersects(button);
                 }
@@ -426,9 +442,9 @@ public class RubeGoldbergSimulation extends Applet implements ActionListener, Ke
                         mechanicalArm[0].rotY(deltaTime * Math.PI * 4);
                         if(coffeeInPlace)
                         {
-                            coffee.setParent(objRoot);
-                            coffee.setScale(new Vector3d(0.1, 0.1, 0.1));
-                            coffee.moveTo(new Vector3d(1.68, -1.25, -0.18));
+                            beverage.setParent(objRoot);
+                            beverage.setScale(new Vector3d(0.1, 0.1, 0.1));
+                            beverage.moveTo(new Vector3d(1.68, -1.25, -0.18));
                         }
                     }
                     else
@@ -448,30 +464,12 @@ public class RubeGoldbergSimulation extends Applet implements ActionListener, Ke
             }
         }
 
-        //lookAtPoint = mechanicalArm[0].getCurrentPosition();
-
-        /*if (!letBallonGo) {
-         letBallonGo = balloon.intersects(apple);
-            
-         if (!apple.intersects(plate)) {
-         apple.rot((Math.PI * 4) * deltaTime, new Vector3d(rand.nextDouble() * 100, rand.nextDouble() * 100, rand.nextDouble() * 100));
-         apple.applyMovement(new Vector3d(0, -5 * deltaTime, 0));
-         lookAtPoint = apple.getCurrentPosition();
-         } else {
-         plate.applyMovement(new Vector3d(2 * deltaTime, 0, 0));
-         apple.applyMovement(new Vector3d(2 * deltaTime, 0, 0));
-         lookAtPoint = apple.getCurrentPosition();
-         for(int i = 0; i < cylinders.length; i++)
-         cylinders[i].rotY(4 * -Math.PI * deltaTime);
-         }
-         } else {
-         balloon.applyMovement(new Vector3d(0, .8 * deltaTime, 0));
-         balloon.rotY((Math.PI * 3) * deltaTime);
-         lookAtPoint = balloon.getCurrentCollisionCenter();
-         }*/
-        for (int i = 0; i < cameraManager.getCount(); i++) {
-            cameraManager.setCameraLookAt(i, lookAtPoint);
-        }
+        
+        cameraManager.setCameraLookAt(0, lookAtPoint);
+        cameraManager.setCameraLookAt(1, fruit.getCurrentPosition());
+        cameraManager.setCameraLookAt(2, plate.getCurrentPosition());
+        cameraManager.setCameraLookAt(3, army_truck.getCurrentPosition());
+        cameraManager.setCameraLookAt(4, mechanicalArm[0].getCurrentPosition());
     }
     
     private void buttonEvents(Object source){
@@ -615,21 +613,36 @@ public class RubeGoldbergSimulation extends Applet implements ActionListener, Ke
     private void changeBeverageToCoffee(){
         if(!timer.isRunning())
         {
-            //TODO: Change beverage to Coffe
+            beverage = coffee;
+            beverage.setParent(mechanicalArm[0].getTransformGroup());
+            beverage.setScale(new Vector3d(0.1 / 0.75, 0.1 / 0.75, 0.1 / 0.75));
+            beverage.moveTo(new Vector3d(0, 0.85, 1.1));
+            tea.moveTo(new Vector3d(100, 0, 0));
+            milk.moveTo(new Vector3d(100, 0, 0));
         }
     }
 
     private void changeBeverageToTea(){
         if(!timer.isRunning())
         {
-            //TODO: Change beverage to Tea
+            beverage = tea;
+            beverage.setParent(mechanicalArm[0].getTransformGroup());
+            beverage.setScale(new Vector3d(0.1 / 0.75, 0.1 / 0.75, 0.1 / 0.75));
+            beverage.moveTo(new Vector3d(0, 0.85, 1.1));
+            coffee.moveTo(new Vector3d(100, 0, 0));
+            milk.moveTo(new Vector3d(100, 0, 0));
         }
     }
 
     private void changeBeverageToMilk(){
         if(!timer.isRunning())
         {
-            //TODO: Change beverage to Milk
+            beverage = milk;
+            beverage.setParent(mechanicalArm[0].getTransformGroup());
+            beverage.setScale(new Vector3d(0.1 / 0.75, 0.1 / 0.75, 0.1 / 0.75));
+            beverage.moveTo(new Vector3d(0, 0.85, 1.1));
+            tea.moveTo(new Vector3d(100, 0, 0));
+            coffee.moveTo(new Vector3d(100, 0, 0));
         }
     }
 }

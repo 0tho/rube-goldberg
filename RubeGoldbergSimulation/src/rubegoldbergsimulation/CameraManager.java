@@ -13,8 +13,6 @@ import javax.vecmath.Vector3d;
 
 /**
  * Manages a camera
- *
- * @author Raphael
  */
 public class CameraManager {
 

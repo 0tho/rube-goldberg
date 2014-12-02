@@ -21,8 +21,6 @@ import static rubegoldbergsimulation.RubeGoldbergSimulation.assetsFolder;
 
 /**
  * Represents a mesh and helps apply transformations to it
- *
- * @author Raphael
  */
 public class MeshObject {
     /*
@@ -218,7 +216,7 @@ public class MeshObject {
     }
 
     /**
-     * Sets the rotation in rad around the given axis axis
+     * Zeroes all rotations and sets the rotation in rad around the given axis axis
      *
      * @param rad amount to rotate in rad
      * @param axis axis to rotate around
@@ -229,7 +227,7 @@ public class MeshObject {
     }
 
     /**
-     * Sets the rotation in rad around the X axis
+     * Zeroes all rotations and sets the rotation in rad around the X axis
      *
      * @param rad amount to rotate in rad
      */
@@ -238,7 +236,7 @@ public class MeshObject {
     }
 
     /**
-     * Sets the rotation in rad around the Y axis
+     * Zeroes all rotations and sets the rotation in rad around the Y axis
      *
      * @param rad amount to rotate in rad
      */
@@ -247,7 +245,7 @@ public class MeshObject {
     }
 
     /**
-     * Sets the rotation in rad around the Z axis
+     * Zeroes all rotations and sets the rotation in rad around the Z axis
      *
      * @param rad amount to rotate in rad
      */
